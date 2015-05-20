@@ -3,12 +3,12 @@
 # I guess I should take a few parameters. 
 dotfiles: # the dotfiles derivation
 
-{ config, pkgs ... }: 
+{ config, pkgs, ... }: 
   
 {
   system.activationScripts = 
     {
       rice-dotfiles =
-        '' echo "it appears that this works" > /home/outputfile ; ''
-    }
+        '' echo "it appears that this works" > /home/outputfile ; '';
+    };
 }
