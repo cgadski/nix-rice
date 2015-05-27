@@ -18,7 +18,7 @@ set autoindent
 export test=testing
 '';
     };
-  homeFileOutputs = filepath : map (prefix: prefix + filepath) ["/home/magneticduck" "/home/root"];
+  homeFileOutputs = filepath : map (prefix: prefix + filepath) ["/home/magneticduck/" "/root/"];
 
 in
     
