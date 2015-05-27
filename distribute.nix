@@ -8,7 +8,7 @@ let
   unlines = x: concatStrings (map (y: y + "\n") x) ;
   activateFile = 
     x: concatStrings (map (destination: 
-      "echo ${destination} >> ${logfile}; cat ${x.input} >> ${destination}; ") x.output);
+      "echo ${destination} >> ${logfile}; mkdir -p ${destination}; rmdkri ${destionation}; cat ${x.input} >> ${destination}; ") x.output);
 in
 
 {
