@@ -1,3 +1,4 @@
+rice-config:
 {pkgs, config, ...}:
 let
   stringToFile = contents: (x: x.out) (pkgs.writeTextFile {text = contents; name = "text";});
