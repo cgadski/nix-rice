@@ -1,9 +1,10 @@
-{pkgs, rice-options, ...}:
+{pkgs, config, utilities, ...}:
 
 let
-  callPart = file: rice-options: import file {inherit pkgs rice-options;};
+  makeUtility = file: import file {inherit pkgs;};
 in
 
 {
-  distribute = callPart ./distribute/default.nix;
+  distribute = makeUtility ./distribute.nix;
+  call = x: x { inherit pkgs config utilities;};
 }

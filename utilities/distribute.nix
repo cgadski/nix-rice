@@ -1,13 +1,10 @@
-{ pkgs, rice-options, ... }: 
+{ pkgs, ... }: 
+nix-files:
 
 let
   inherit (pkgs.stdenv.lib) concatStrings; 
 
-  files = 
-    if rice-options ? nix-files then
-      rice-options.nix-files
-    else
-      [];
+  files = nix-files;
 
   logfile = "/etc/nix-files";
  

@@ -9,3 +9,12 @@ Ricing, in a restricted sense, is often used to describe the act of superficiall
 
 The purpose of the nix-rice project is to use nix to develop and deploy linux desktop ricing configurations, and solve related issues and add necessary features to the nixos system in the process.
 
+## How do I use this project as an end-user?
+
+Import a file like example/rice.nix into your configuration.nix, and adjust makeRice accordingly. 
+
+## What is the structure of this project?
+
+
+
+
