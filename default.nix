@@ -7,32 +7,39 @@
     
   makeRice = { customFiles, dm, wm }:
     { pkgs, config, utilities, ...}:
+
+    let
+      myconfig = { 
+        system.activationScripts = utilities.distribute customFiles; 
+      }; in
     {
-      system.activationScripts = utilities.distribute customFiles;
-    } // (utilities.call dm).config; ## work in progress ofc
+      config = utilities.combineConfigs [dm myconfig];
+    }; 
 
   makeDM.slim = { theme, defaultUser }:
     { pkgs, config, utilities, ...}:
-    {
-      config = {
+    let
+      myconfig = {
         services.xserver.displayManager.slim = {
           enable = true;
-          inherit theme defaultUser;
+          inherit theme defaultUser; 
         };
-      };
+      }; in
+    {
+      config = utilities.combineConfigs [ myconfig ];
       handles = { };
     };
   
   makeWM.i3 = { }:
     { pkgs, config, utilities, ...}:
-    {
-      config = {
+    let
+      myconfig = {
         services.xserver.windowManager.i3 = {
           enable = true;
         };
-      };
+      }; in
+    {
+      config = utilities.combineConfigs [ myconfig ];
       handles = { };
     };
-    
-  
 }
