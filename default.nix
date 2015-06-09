@@ -1,45 +1,70 @@
 {
-  callRice = { config, pkgs, ...}: rice:
-    rice
-      rec { inherit config pkgs;
-        utilities = import ./utilities/default.nix {inherit config pkgs utilities;}; # utilities is passed to itself to define the "call" utility
-      };
-    
-  makeRice = { customFiles, dm, wm }:
-    { pkgs, config, utilities, ...}:
+  ############################## TOP LEVEL ############################## 
 
+  # callRice:
+    # this is the top-level function: calling it with a 'rice' element 
+    # constructed with makeRice results in a configuration set parameterized 
+    # over {lib, # config, pkgs} which can be imported into configuration.nix
+  callRice = rice:
+    {lib, config, pkgs, ...}:
+      let 
+        world = 
+          import ./utilities/default.nix { inherit pkgs config lib; };
+      in 
+        (rice world).config;
+
+  ############################# CONSTRUCTORS ############################# 
+  # nix-rice's is based on 'elements', which represent pieces of a ricing 
+  # configuration; they are functions that take a 'world' parameter, 
+  # containing useful values values and some internal utilities, and result
+  # in a set containing two elements: 'config', the configuration parameters
+  # that the element intends to add to the system configuration, and
+  # 'handles', a set of related return values that can be useful
+  # to their parent elements (for instance, a terminal element may return
+  # the path of the terminal's binary file)
+
+  # makeRice:
+    # constructs a 'rice' element
+      # customFiles: a set of dotfiles to be distributed across the system
+        # of the form: [{in = <input filepath>; out = [<output filepaths>];}]
+      # dm: the dm (desktop manager) element
+      # wm: the wm (window manager) element
+  makeRice = { customFiles, dm, wm }: world: 
     let
       myconfig = { 
-        system.activationScripts = utilities.distribute customFiles; 
-      }; in
-    {
-      config = utilities.combineConfigs [dm myconfig];
-    }; 
+        system.activationScripts = world.utils.distribute customFiles; 
+      }; 
+    in 
+      { config = world.utils.combineConfigs [dm myconfig];
+        handles = { }; }; 
 
-  makeDM.slim = { theme, defaultUser }:
-    { pkgs, config, utilities, ...}:
+  # makeDM.slim:
+    # constructs a dm element with the slim desktop manager
+      # theme: the theme file to be used
+        # pkgs.slimThemes.flat
+      # defaultUser: the default user 
+  makeDM.slim = { theme, defaultUser }: world:
     let
       myconfig = {
         services.xserver.displayManager.slim = {
           enable = true;
           inherit theme defaultUser; 
         };
-      }; in
-    {
-      config = utilities.combineConfigs [ myconfig ];
-      handles = { };
-    };
+      }; 
+    in
+    { config = world.utils.combineConfigs [ myconfig ];
+      handles = { }; };
   
-  makeWM.i3 = { }:
-    { pkgs, config, utilities, ...}:
+
+  # makeDM.i3:
+    # constructs a dm element with the slim desktop manager
+  makeWM.i3 = { }: world:
     let
       myconfig = {
         services.xserver.windowManager.i3 = {
           enable = true;
         };
       }; in
-    {
-      config = utilities.combineConfigs [ myconfig ];
-      handles = { };
-    };
+    { config = world.utils.combineConfigs [ myconfig ];
+      handles = { }; };
 }

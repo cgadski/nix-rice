@@ -1,16 +1,22 @@
-{pkgs, config, utilities, ...}:
+########################### UTILITIES ############################
+# this expression, given a set of containing nixpkgs, the nix library,
+# and the system config, returns the "world" parameter over which 
+# all elements are parameterized 
 
-let
-  makeUtility = file: import file {inherit pkgs;};
-  lib = pkgs.stdenv.lib;
-in
+{pkgs, lib, config, ...}:
 
-rec {
-  distribute = makeUtility ./distribute.nix;
-  call = x: x { inherit pkgs config utilities;};
+(f: let x = f x; in x)
+(self: rec {
+  world = self;
+  call = x: x world;
 
-  # this takes an array of config sets and returns a single config set
-  combineConfigs = configs: 
-  # an infinite recursion is encountered here: why?
-    lib.foldl lib.recursiveUpdate {} [];
-}
+  inherit pkgs config lib;
+
+  utils = {
+    distribute = import (./distribute.nix) {inherit pkgs;};
+
+    # this takes an array of config sets and returns a single config set
+    combineConfigs = myconfigs: 
+      lib.foldl lib.recursiveUpdate {} myconfigs;
+  };   
+})
