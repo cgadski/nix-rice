@@ -28,6 +28,8 @@ Nix-rice is a simpler, more portable and compact way of ricing. It forms a small
       };
     }
 
+Imagine if posts on r/unixporn all came with their own rice expression so all you have to do to try them out is import them into your system configuration!
+
 ## How do I use / contribute to it?
 
 example/rice.nix is a usage case, and there is documentation in the source code.
