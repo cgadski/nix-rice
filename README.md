@@ -6,7 +6,7 @@ Ricing, in a restricted sense, is often used to describe the act of superficiall
 
 ## Why am I not just using configuration.nix for ricing?
 
-Nix-rice is a simpler, more portable and compact way of ricing. It forms a small wrapper over the nixos configuration system, adding some necessary features, reorganising structure, and seperating ricing from the rest of the system configuration. Here's an example of a ricing:
+Nix-rice is a simpler, more portable and compact way of ricing. It forms a small wrapper over a part of the nixos configuration system, adding some necessary features, reorganising structure, and seperating ricing from the rest of the system configuration. Here's an example of a ricing:
 
     makeRice {
       customFiles = [{input = ./vimrc; output = userFile ".vimrc";}];
