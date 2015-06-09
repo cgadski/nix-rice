@@ -1,6 +1,5 @@
 {
   ############################## TOP LEVEL ############################## 
-
   # callRice:
     # this is the top-level function: calling it with a 'rice' element 
     # constructed with makeRice results in a configuration set parameterized 
