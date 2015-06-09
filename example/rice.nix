@@ -6,18 +6,18 @@ let
   inputs = { vimrc = ./dotfiles/vimrc; };
   homeFileOutputs = 
     filepath : map (prefix: prefix + filepath) [("/home/" + normalUser + "/") "/root/"];
+
+  myRice = with nix-rice; 
+    makeRice {
+      customFiles = 
+        [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";} ] ;
+      wm = makeWM.i3 {};
+      dm = makeDM.slim { 
+        theme = null;
+        defaultUser = null;
+      };
+    };
+
 in
 
-nix-rice.callRice 
-  { inherit config pkgs; }
-  (with nix-rice; 
-
-  makeRice {
-    customFiles = 
-      [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";} ] ;
-    wm = makeWM.i3 {};
-    dm = makeDM.slim { 
-      theme = null;
-      defaultUser = null;
-    };
-  })
+nix-rice.callRice myRice { inherit config lib pkgs; }

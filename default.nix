@@ -29,13 +29,13 @@
         # of the form: [{in = <input filepath>; out = [<output filepaths>];}]
       # dm: the dm (desktop manager) element
       # wm: the wm (window manager) element
-  makeRice = { customFiles, dm, wm }: world: 
+  makeRice = { customFiles, dm, wm }: world: with world;
     let
       myconfig = { 
-        system.activationScripts = world.utils.distribute customFiles; 
+        system.activationScripts = utils.distribute customFiles; 
       }; 
     in 
-      { config = world.utils.combineConfigs [(world.call dm).config myconfig];
+      { config = utils.combineConfigs [(call dm).config myconfig];
         handles = { }; }; 
 
   # makeDM.slim:
@@ -43,7 +43,7 @@
       # theme: the theme file to be used
         # pkgs.slimThemes.flat
       # defaultUser: the default user 
-  makeDM.slim = { theme, defaultUser }: world:
+  makeDM.slim = { theme, defaultUser }: world: with world;
     let
       myconfig = {
         services.xserver.displayManager.slim = {
@@ -52,18 +52,18 @@
         };
       }; 
     in
-    { config = world.utils.combineConfigs [ myconfig ];
+    { config = utils.combineConfigs [ myconfig ];
       handles = { }; };
 
   # makeDM.i3:
-    # constructs a dm element with the slim desktop manager
-  makeWM.i3 = { }: world:
+    # constructs a wm element with the i3 desktop manager
+  makeWM.i3 = { }: world: with world;
     let
       myconfig = {
         services.xserver.windowManager.i3 = {
           enable = true;
         };
       }; in
-    { config = world.utils.combineConfigs [ myconfig ];
+    { config = utils.combineConfigs [ myconfig ];
       handles = { }; };
 }
