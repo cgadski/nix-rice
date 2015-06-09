@@ -14,13 +14,13 @@
         (world.call rice).config;
 
   ############################# CONSTRUCTORS ############################# 
-  # nix-rice's is based on 'elements', which represent pieces of a ricing 
+  # nix-rice is based on 'elements', which represent pieces of a ricing 
   # configuration; they are functions that take a 'world' parameter, 
-  # containing useful values values and some internal utilities, and result
+  # containing useful values and some internal utilities, and result
   # in a set containing two elements: 'config', the configuration parameters
   # that the element intends to add to the system configuration, and
-  # 'handles', a set of related return values that can be useful
-  # to their parent elements (for instance, a terminal element may return
+  # 'handles', a set of return values that can be useful to other elements
+  # that use them elements (for instance, a terminal element may return 
   # the path of the terminal's binary file)
 
   # makeRice:
