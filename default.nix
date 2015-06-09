@@ -4,14 +4,14 @@
   # callRice:
     # this is the top-level function: calling it with a 'rice' element 
     # constructed with makeRice results in a configuration set parameterized 
-    # over {lib, # config, pkgs} which can be imported into configuration.nix
+    # over {lib, config, pkgs} which can be imported into configuration.nix
   callRice = rice:
     {lib, config, pkgs, ...}:
       let 
         world = 
           import ./utilities/default.nix { inherit pkgs config lib; };
       in 
-        (rice world).config;
+        (world.call rice).config;
 
   ############################# CONSTRUCTORS ############################# 
   # nix-rice's is based on 'elements', which represent pieces of a ricing 
@@ -35,7 +35,7 @@
         system.activationScripts = world.utils.distribute customFiles; 
       }; 
     in 
-      { config = world.utils.combineConfigs [dm myconfig];
+      { config = world.utils.combineConfigs [(world.call dm).config myconfig];
         handles = { }; }; 
 
   # makeDM.slim:
@@ -54,7 +54,6 @@
     in
     { config = world.utils.combineConfigs [ myconfig ];
       handles = { }; };
-  
 
   # makeDM.i3:
     # constructs a dm element with the slim desktop manager
