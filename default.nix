@@ -1,4 +1,4 @@
-{
+rec {
   callRice = rice:
     {lib, config, pkgs, ...}:
       let 
@@ -16,11 +16,11 @@
   # with makeTerminal.
 
   makeRice = { customFiles, dm, wm }: 
+    assert dm.type == "dm";
+    assert wm.type == "wm";
   { 
     type = "rice";
     inherit customFiles dm wm; 
-    assert dm.type == "dm";
-    assert wm.type == "wm";
   };
 
   makeDM.slim = { theme, defaultUser }:
@@ -34,7 +34,7 @@
   {
     type = "wm";
     species = "i3";
-  }
+  };
 
   ############################# BUILDERS -> ACTUATORS ############################# 
   # In the necessary course that an element takes to contribute to the system
@@ -53,27 +53,29 @@
       myconfig = { 
         system.activationScripts = utils.distribute rice.customFiles; 
       }; 
+      dm = world.call (buildDM rice.dm);
+      wm = { config = {}; handles = {};};
     in 
       { 
-        config = mkMerge 
-          [(makeDM rice.dm).config (makeWM rice.wm).config myconfig];
+        config = lib.mkMerge 
+          [dm.config wm.config myconfig];
         handles = { }; 
       }; 
 
   buildDM = dm: world: with world;
     let
       myconfig = 
-        if dm.species = "slim" then
+        if dm.species == "slim" then
           {
             services.xserver.displayManager.slim = {
               enable = true;
-              inherit theme defaultUser; 
+              inherit (dm) theme defaultUser; 
             };
           } 
         else { };
     in
     { 
-      config = mkMerge [ myconfig ];
+      config = lib.mkMerge [ myconfig ];
       handles = { }; 
     };
 }

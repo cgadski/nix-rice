@@ -36,7 +36,7 @@ Imagine if posts on r/unixporn all came with their own rice expression so all yo
 ## glossary of terms
 
 - element
-  - a set, containing a 'type' attribute and some parameters, which characterizes a part of a ricing configuration: a terminal, a window manager, for example
+  - a set, containing a 'type' attribute and some parameters, which characterizes a part of a ricing configuration: a terminal or a window manager, for example
 - constructor
   - a simple function that, given a set of necessary parameters, constructs an element of a specific type
 - actuator
