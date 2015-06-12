@@ -43,7 +43,6 @@ Imagine if posts on r/unixporn all came with their own rice expression so all yo
   - a function that, given a 'world' parameter containing a host of useful information, returns a set containing a 'config' attribute and a 'handles' attribute, which represent the side-effects the actuator will have on the system configuration and the return values that it may produce respectively
 - builder
   - a function that transforms an element into an actuator
-
 - a rice element
   - a top-level element of the nix-rice system; an entire ricing configuration
 - callRice
