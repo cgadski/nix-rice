@@ -1,29 +1,13 @@
 {
-  ############################## BIG PICTURE ############################## 
-  # The nix-rice library is a wrapper over a subset of the nixos configuration
-  # system; particularly the part of that system concerned with parameters
-  # of concern to ricing (the superficial configuration of the user interface).
-
-  # Here, we define a system of modularly nester 'elements', which conceptually 
-  # represent parts of the ricing configuration (display managers and their dotfiles,
-  # terminals and their colorschemes), which contribute to a top-level element,
-  # called a 'rice'. This element may contribute to a system configuration by 
-  # being called with 'callRice' subsequently being imported into a branch of
-  # configuration.nix
-
-  # callRice:
-    # this is the top-level function: calling it with a 'rice' element 
-    # constructed with makeRice results in a configuration set parameterized 
-    # over {lib, config, pkgs} which can be imported into configuration.nix
   callRice = rice:
     {lib, config, pkgs, ...}:
       let 
         world = 
           import ./utilities/default.nix { inherit pkgs config lib; };
       in 
-        (world.call (buildRice rice).config;
+        ((buildRice rice) world).config;
 
-  ############################# CONSTRUCTORS ############################# 
+  ############################# CONSTRUCTORS -> ELEMENTS ############################# 
   # Here we have the various constructors defined for the various elements.
   # They alone are fairly self-explanatory.
   #   terminal =
@@ -31,12 +15,6 @@
   # For instance, defines 'terminal' to be a terminal element, constructed
   # with makeTerminal.
 
-  # makeRice:
-    # constructs a 'rice' element
-      # customFiles: a set of dotfiles to be distributed across the system
-        # of the form: [{in = <input filepath>; out = [<output filepaths>];}]
-      # dm: the dm (desktop manager) element
-      # wm: the wm (window manager) element
   makeRice = { customFiles, dm, wm }: 
   { 
     type = "rice";
@@ -58,8 +36,7 @@
     species = "i3";
   }
 
-
-  ############################# ACTUATORS ############################# 
+  ############################# BUILDERS -> ACTUATORS ############################# 
   # In the necessary course that an element takes to contribute to the system
   # configuration, it is built into its respective actuator: an actuator
   # accepts as parameter a 'world' value that contains such things as the
@@ -67,6 +44,9 @@
   # two elements: a set of configuration options, and a set of handles, 
   # which serve as return values for the actuator (a terminal may return
   # its binary file, for example).
+
+  # These do not need to be called by the end user, as they are called via
+  # the evaluation of callRice.
 
   buildRice = rice: world: with world;
     let
@@ -76,18 +56,21 @@
     in 
       { 
         config = mkMerge 
-          [(call rice.dm).config (call rice.wm).config myconfig];
+          [(makeDM rice.dm).config (makeWM rice.wm).config myconfig];
         handles = { }; 
       }; 
 
-  makeDM.slim = dm: world: with world;
+  buildDM = dm: world: with world;
     let
-      myconfig = {
-        services.xserver.displayManager.slim = {
-          enable = true;
-          inherit theme defaultUser; 
-        };
-      }; 
+      myconfig = 
+        if dm.species = "slim" then
+          {
+            services.xserver.displayManager.slim = {
+              enable = true;
+              inherit theme defaultUser; 
+            };
+          } 
+        else { };
     in
     { 
       config = mkMerge [ myconfig ];
