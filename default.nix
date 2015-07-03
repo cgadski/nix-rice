@@ -5,7 +5,7 @@ rec {
         world = 
           import ./utilities/default.nix { inherit pkgs config lib; };
       in 
-        ((buildRice rice) world).config;
+        (world.call (buildRice rice)).config;
 
   ############################# CONSTRUCTORS -> ELEMENTS ############################# 
   # Here we have the various constructors defined for the various elements.
@@ -15,24 +15,15 @@ rec {
   # For instance, defines 'terminal' to be a terminal element, constructed
   # with makeTerminal.
 
-  makeRice = { customFiles, dm, wm }: 
-    assert dm.type == "dm";
+  makeRice = { customFiles, wm }: 
     assert wm.type == "wm";
   { 
     type = "rice";
-    inherit customFiles dm wm; 
-  };
-
-  makeDM.slim = { theme, defaultUser }:
-  {
-    type = "dm";
-    species = "slim";
-    inherit theme defaultUser;
+    inherit customFiles wm; 
   };
 
   makeWM.i3 = { }:
-  {
-    type = "wm";
+  { type = "wm";
     species = "i3";
   };
 
@@ -48,34 +39,42 @@ rec {
   # These do not need to be called by the end user, as they are called via
   # the evaluation of callRice.
 
-  buildRice = rice: world: with world;
+  # buildRice {{{
+  buildRice = {type, customFiles, wm}: world: with world;
+    assert type == "rice";
+
     let
       myconfig = { 
-        system.activationScripts = utils.distribute rice.customFiles; 
+        system.activationScripts = utils.distribute customFiles; 
       }; 
-      dm = world.call (buildDM rice.dm);
-      wm = { config = {}; handles = {};};
+      wmActuator = world.call (buildWM wm);
     in 
-      { 
-        config = lib.mkMerge 
-          [dm.config wm.config myconfig];
+      { config = lib.mkMerge [wmActuator.config myconfig];
         handles = { }; 
       }; 
+  # }}}
 
-  buildDM = dm: world: with world;
+  # buildWM {{{
+  buildWM = wm@{type, species}: world: with world;
+    assert type == "wm";
+
+    if species == "i3" then
+      world.call (buildWMs.i3 wm)
+    else throw "bad species";
+  # }}}
+
+  # buildWMs.i3 {{{
+  buildWMs.i3 = {type, species}: world: with world;
+    assert type == "wm"; assert species == "i3";
+
     let
-      myconfig = 
-        if dm.species == "slim" then
-          {
-            services.xserver.displayManager.slim = {
-              enable = true;
-              inherit (dm) theme defaultUser; 
-            };
-          } 
-        else { };
+      myconfig =
+        {
+          services.xserver.displayManager.slim = { enable = true; };
+          services.xserver.windowManager.i3 = { enable = true; };
+        };
     in
-    { 
-      config = lib.mkMerge [ myconfig ];
-      handles = { }; 
-    };
+      { config = myconfig;
+        handles = {}; };
+  # }}}
 }

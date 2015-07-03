@@ -12,10 +12,6 @@ let
       customFiles = 
         [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";} ] ;
       wm = makeWM.i3 {};
-      dm = makeDM.slim { 
-        theme = null;
-        defaultUser = null;
-      };
     };
 
 in
