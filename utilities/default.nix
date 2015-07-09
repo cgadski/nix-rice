@@ -14,10 +14,5 @@
 
   utils = {
     distribute = import (./distribute.nix) {inherit pkgs;};
-
-    # this takes an array of config sets and returns a single config set
-    combineConfigs = myconfigs: 
-      lib.foldl lib.recursiveUpdate {} myconfigs;
-      # FIXME
   };   
 })

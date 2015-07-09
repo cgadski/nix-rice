@@ -15,17 +15,15 @@ rec {
   # For instance, defines 'terminal' to be a terminal element, constructed
   # with makeTerminal.
 
-  makeRice = { customFiles, wm }: 
-    assert wm.type == "wm";
-  { 
-    type = "rice";
-    inherit customFiles wm; 
-  };
+  makeRice = opts: 
+    assert opts.wm.type == "wm";
+  { type = "rice";
+  } // opts;
 
-  makeWM.i3 = { }:
+  makeWM.i3 = opts:
   { type = "wm";
     species = "i3";
-  };
+  } // opts;
 
   ############################# BUILDERS -> ACTUATORS ############################# 
   # In the necessary course that an element takes to contribute to the system
@@ -40,8 +38,8 @@ rec {
   # the evaluation of callRice.
 
   # buildRice {{{
-  buildRice = {type, customFiles, wm}: world: with world;
-    assert type == "rice";
+  buildRice = rice@{customFiles, wm, ...}: world: with world;
+    assert rice.type == "rice";
 
     let
       myconfig = { 
@@ -55,17 +53,17 @@ rec {
   # }}}
 
   # buildWM {{{
-  buildWM = wm@{type, species}: world: with world;
-    assert type == "wm";
+  buildWM = wm@{...}: world: with world;
+    assert wm.type == "wm";
 
-    if species == "i3" then
+    if wm.species == "i3" then
       world.call (buildWMs.i3 wm)
     else throw "bad species";
   # }}}
 
   # buildWMs.i3 {{{
-  buildWMs.i3 = {type, species}: world: with world;
-    assert type == "wm"; assert species == "i3";
+  buildWMs.i3 = wm@{terminal, ...}: world: with world;
+    assert wm.type == "wm"; assert wm.species == "i3";
 
     let
       myconfig =
