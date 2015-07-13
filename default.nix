@@ -44,7 +44,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     mkBuilder "wm" (wm@{species ? "i3", ...}:
       if wm.species == "i3" then
         callElement buildWMs.i3 wm
-      else throw ("unknown wm species" + wm.species)
+      else throw ("unknown wm species " + wm.species)
     );
   # }}}
 
@@ -99,13 +99,17 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
       let
         myconfig = { };
         lilyterm-config =
-          import ./dotfiles/lilyterm.nix {inherit font browser email;};
+          pkgs.writeTextFile {
+            name = "lilyterm.config"; 
+            text = import ./dotfiles/lilyterm.nix 
+              {inherit font browser email;};
+          };
       in
         { config = myconfig;
           handles = { 
             out = 
               pkgs.writeScript "lilyterm" ''
-                ${pkgs.lilyterm} -u ${lilyterm-config}
+                ${pkgs.lilyterm}/bin/lilyterm -u ${lilyterm-config}
               ''; 
           }; 
         }

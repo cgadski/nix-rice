@@ -5,7 +5,8 @@ nix-rice: with nix-rice;
       let
         inputs = { vimrc = ./precooked-dots/vimrc; };
         homeFileOutputs = 
-          filepath : map (prefix: prefix + filepath) [("/home/" + user + "/") "/root/"]; 
+          filepath : map (prefix: prefix + filepath) 
+            [("/home/" + user + "/") "/root/"]; 
       in
       {
         customFiles = 
@@ -15,7 +16,6 @@ nix-rice: with nix-rice;
           term = 
             makeTerm.lilyterm {
               font = "Monospace 12";
-              browser = "firefox";
             };
         };
       }
