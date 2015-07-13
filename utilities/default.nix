@@ -3,27 +3,29 @@
 # and the system config, returns the "world" parameter over which 
 # all elements are parameterized 
 
-{pkgs, lib, config, ...}:
+{pkgs, lib, config, user, ...}:
 
 (f: let x = f x; in x)
 (self: rec {
   world = self;
-  call = x: x world;
 
-  inherit pkgs config lib;
+  call = x: if builtins.isFunction x then x world else x;
+
+  nullActuator = { config = {}; handles = {}; };
+  callElement = builder: getElement: 
+    let element = call getElement; in
+      if isNull element then nullActuator else call (builder element);
+
+  mkBuilder = type: f: getElement: 
+    let element = (call getElement); in
+      assert element.type == type;
+      f element;
+
+  inherit pkgs config lib user;
 
   utils = {
     distribute = import (./distribute.nix) {inherit pkgs;};
   };   
 
-  nullActuator = {
-    config = {};
-    handles = {};
-  };
 
-  # utility function that builds an element into an actuator
-  # with a builder if the element is not null, and otherwise
-  # returns a nullActuator
-  callElement = builder: element: 
-    if isNull element then nullActuator else call (builder element);
 })
