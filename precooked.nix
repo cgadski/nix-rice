@@ -7,16 +7,22 @@ nix-rice: with nix-rice;
         homeFileOutputs = 
           filepath : map (prefix: prefix + filepath) 
             [("/home/" + user + "/") "/root/"]; 
+        font = makeFont {
+          name = "dejavu";
+          size = "12";
+        };
       in
       {
         customFiles = 
           [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";}];
         wm = makeWM.i3 {
+          inherit font;
           modkey = "Mod4";
-          term = 
-            makeTerm.lilyterm {
-              font = "Monospace 12";
-            };
+          term = makeTerm.lilyterm {
+            browser = "firefox";
+            email = "thunderbird";
+            inherit font;
+          };
         };
       }
     );

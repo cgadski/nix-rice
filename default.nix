@@ -18,7 +18,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     world: { type = "wm"; species = "i3"; } // (world.call opts);
   makeTerm.lilyterm = opts:
     world: { type = "term"; species = "lilyterm"; } // (world.call opts);
-  makeFont.dejavu = opts:
+  makeFont = opts:
     world: { type = "font"; species = "dejavu"; } // (world.call opts);
 
 ## BUILDERS return ACTUATORS ##
@@ -54,10 +54,12 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
   buildWMs.i3 = world: with world;
     mkBuilder "wm" (
       wm@{
+        font ? null,
         term ? null, 
         modkey ? "Mod4", ...}: 
       let
         termAct = callElement buildTerm term;
+        fontAct = callElement buildFont font;
         myconfig =
           {
             services.xserver = { 
@@ -71,6 +73,9 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
                     term = 
                       if isNull term then "xterm" else 
                         termAct.handles.out;
+                    font = 
+                      if isNull font then "monospace 12" else
+                        fontAct.handles.name;
                   };
                 };
               autorun = true; enable = true; 
@@ -78,7 +83,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
           };
       in
         { 
-          config = lib.mkMerge [myconfig termAct.config];
+          config = lib.mkMerge [myconfig termAct.config fontAct.config];
           handles = {}; 
         }
     );
@@ -97,20 +102,25 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
   buildTerms.lilyterm = world: with world;
     mkBuilder "term" (
       term@{
-        font ? "Monospace 12", 
         browser ? "firefox", 
-        email ? "thunderbird", ...}: 
+        email ? "thunderbird", 
+        font ? null, ...}: 
       let
+        fontAct = callElement buildFont font;
         myconfig = { };
         lilyterm-config =
           pkgs.writeTextFile {
             name = "lilyterm.config"; 
-            text = import ./dotfiles/lilyterm.nix 
-              {inherit font browser email;};
+            text = import ./dotfiles/lilyterm.nix {
+              inherit browser email;
+              font = 
+                if isNull font then "Monospace 12" else
+                  fontAct.handles.name;
+            };
           };
       in
         { 
-          config = myconfig;
+          config = lib.mkMerge [myconfig fontAct.config];
           handles = { 
             out = 
               pkgs.writeScript "lilyterm" ''
@@ -123,31 +133,24 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
 
   # buildFont {{{ 
   buildFont = world: with world;
-    mkBuilder "font" (font@{species ? "dejavu", ...}:
-      if font.species == "dejavu" then
-        callElement buildFonts.dejavu font
-      else throw ("unknown font species " ++ font.species)
-    );
-  # }}}
-
-  # buildFonts.dejavu {{{
-  buildFonts.dejavu = world: with world;
-    mkBuilder "font" (font@{size ? "12", ...}:
+    mkBuilder "font" (font@{name, size ? "12", ...}:
       let
         myconfig = {
           fonts = {
             enableFontDir = true;
             enableGhostscriptFonts = true;
-            fonts = with pkgs; [
-              dejavu_fonts
-            ];
+            fonts = with pkgs; 
+              lib.optionals (name == "dejavu") [dejavu_fonts];
           };
         };
       in
         { 
           config = myconfig;
           handles = {
-            name = "Dejavu ${size}";
+            name = 
+              if name == "dejavu" then
+                "dejavu sans mono ${size}"
+              else throw ("unknown font name " + name);
           };
         }
     );

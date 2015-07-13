@@ -1,10 +1,10 @@
-{modkey, term}:
+{modkey, term, font}:
 ''
 # modkey
 set $mod ${modkey}
 
 # display settings
-font pango:monospace 8
+font pango:${font}
 new_window pixel 3
 
 # Use Mouse+$mod to drag floating windows to their wanted position
