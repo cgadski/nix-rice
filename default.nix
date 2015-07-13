@@ -18,6 +18,8 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     world: { type = "wm"; species = "i3"; } // (world.call opts);
   makeTerm.lilyterm = opts:
     world: { type = "term"; species = "lilyterm"; } // (world.call opts);
+  makeFont.dejavu = opts:
+    world: { type = "font"; species = "dejavu"; } // (world.call opts);
 
 ## BUILDERS return ACTUATORS ##
   # buildRice {{{
@@ -36,7 +38,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
           config = lib.mkMerge [wmAct.config myconfig];
           handles = { }; 
         }
-    ); 
+    ); # haha a frowny face
   # }}}
 
   # buildWM {{{
@@ -75,12 +77,14 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
             };
           };
       in
-        { config = lib.mkMerge [myconfig termAct.config];
-          handles = {}; }
+        { 
+          config = lib.mkMerge [myconfig termAct.config];
+          handles = {}; 
+        }
     );
   # }}}
 
-  # buildWM {{{
+  # buildTerm  {{{
   buildTerm = world: with world;
     mkBuilder "term" (term@{species ? "lilyterm", ...}:
       if term.species == "lilyterm" then
@@ -105,13 +109,46 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
               {inherit font browser email;};
           };
       in
-        { config = myconfig;
+        { 
+          config = myconfig;
           handles = { 
             out = 
               pkgs.writeScript "lilyterm" ''
                 ${pkgs.lilyterm}/bin/lilyterm -u ${lilyterm-config}
               ''; 
           }; 
+        }
+    );
+  # }}}
+
+  # buildFont {{{ 
+  buildFont = world: with world;
+    mkBuilder "font" (font@{species ? "dejavu", ...}:
+      if font.species == "dejavu" then
+        callElement buildFonts.dejavu font
+      else throw ("unknown font species " ++ font.species)
+    );
+  # }}}
+
+  # buildFonts.dejavu {{{
+  buildFonts.dejavu = world: with world;
+    mkBuilder "font" (font@{size ? "12", ...}:
+      let
+        myconfig = {
+          fonts = {
+            enableFontDir = true;
+            enableGhostscriptFonts = true;
+            fonts = with pkgs; [
+              dejavu_fonts
+            ];
+          };
+        };
+      in
+        { 
+          config = myconfig;
+          handles = {
+            name = "Dejavu ${size}";
+          };
         }
     );
   # }}}
