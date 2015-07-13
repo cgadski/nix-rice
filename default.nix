@@ -22,7 +22,10 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
 ## BUILDERS return ACTUATORS ##
   # buildRice {{{
   buildRice = world: with world; 
-    mkBuilder "rice" (rice@{customFiles ? [], wm ? null, ...}:
+    mkBuilder "rice" (
+      rice@{
+        customFiles ? [], 
+        wm ? null, ...}:
       let
         wmAct = callElement buildWM wm;
         myconfig = { 
@@ -41,13 +44,16 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     mkBuilder "wm" (wm@{species ? "i3", ...}:
       if wm.species == "i3" then
         callElement buildWMs.i3 wm
-      else throw "bad species"
+      else throw ("unknown wm species" + wm.species)
     );
   # }}}
 
   # buildWMs.i3 {{{
   buildWMs.i3 = world: with world;
-    mkBuilder "wm" (wm@{term ? null, modkey ? "Mod4", ...}: 
+    mkBuilder "wm" (
+      wm@{
+        term ? null, 
+        modkey ? "Mod4", ...}: 
       let
         termAct = callElement buildTerm term;
         myconfig =
@@ -77,20 +83,31 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
   # buildWM {{{
   buildTerm = world: with world;
     mkBuilder "term" (term@{species ? "lilyterm", ...}:
-      if wm.species == "lilyterm" then
-        callElement builtTerms.lilyterm term
-      else throw "bad species"
+      if term.species == "lilyterm" then
+        callElement buildTerms.lilyterm term
+      else throw ("unknown term species " + term.species)
     );
   # }}}
 
   # buildWMs.i3 {{{
   buildTerms.lilyterm = world: with world;
-    mkBuilder "term" (wm@{font, ...}: 
+    mkBuilder "term" (
+      term@{
+        font ? "Monospace 12", 
+        browser ? "firefox", 
+        email ? "thunderbird", ...}: 
       let
         myconfig = { };
+        lilyterm-config =
+          import ./dotfiles/lilyterm.nix {inherit font browser email;};
       in
         { config = myconfig;
-          handles = { out = pkgs.lilyterm; }; 
+          handles = { 
+            out = 
+              pkgs.writeScript "lilyterm" ''
+                ${pkgs.lilyterm} -u ${lilyterm-config}
+              ''; 
+          }; 
         }
     );
   # }}}

@@ -39,7 +39,7 @@ Imagine if posts on r/unixporn all came with their own rice expression so all yo
   - epistemically: represents everything an element of a ricing config could want to use.
   - practically: an internally referenced value constructed in utilities/default.nix, containg things like the nix package set and interal utility functions.
 - element
-  - epistemically: represents a part of a ricing configuration (a terminal of window manager).
+  - epistemically: represents a part of a ricing configuration (a terminal or window manager).
   - practically: a function that, given the world value, constructs a set containing a 'type' attribute and some parameters (filepaths, numbers, other elements, you name it). The type attribute it used to implement a sort of trivial type-system; builders assert that their input element is of a certain type.
 - constructor
   - epistemically: turns a set of user-specified parameters into an element; constructors are user-facing.
@@ -68,3 +68,7 @@ The various configuration sets in play are merged with lib.mkMerge.
   Is to go where no ricer has gone before; make a unified system for simple definition and fool-proof and deterministic deployment of ricing configurations.
 
   Thanks to everybody who showed interest in this, I'm going to go ahead and put some work into it.
+
+# documentation of constructors
+
+  Is available in MAKERICE.md in this directory.

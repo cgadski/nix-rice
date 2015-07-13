@@ -1,4 +1,4 @@
-{font, browser ? "", email ? ""}:
+{font, browser, email}:
 ''
 [main]
 auto_save = 0

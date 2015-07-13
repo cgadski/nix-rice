@@ -13,8 +13,9 @@ nix-rice: with nix-rice;
         wm = makeWM.i3 {
           modkey = "Mod4";
           term = 
-            makeTerm.i3 {
-                  
+            makeTerm.lilyterm {
+              font = "Monospace 12";
+              browser = "firefox";
             };
         };
       }
