@@ -38,38 +38,47 @@ rec {
   # the evaluation of callRice.
 
   # buildRice {{{
-  buildRice = rice@{customFiles, wm, ...}: world: with world;
+  buildRice = rice@{customFiles ? [], wm ? null, ...}: 
+    world: with world;
     assert rice.type == "rice";
 
     let
+      wmActuator = callElement buildWM wm;
       myconfig = { 
         system.activationScripts = utils.distribute customFiles; 
       }; 
-      wmActuator = world.call (buildWM wm);
     in 
-      { config = lib.mkMerge [wmActuator.config myconfig];
+      { 
+        config = lib.mkMerge [wmActuator.config myconfig];
         handles = { }; 
       }; 
   # }}}
 
   # buildWM {{{
-  buildWM = wm@{...}: world: with world;
+  buildWM = wm@{...}: 
+    world: with world;
     assert wm.type == "wm";
 
     if wm.species == "i3" then
-      world.call (buildWMs.i3 wm)
+      callElement buildWMs.i3 wm
     else throw "bad species";
   # }}}
 
   # buildWMs.i3 {{{
-  buildWMs.i3 = wm@{terminal, ...}: world: with world;
-    assert wm.type == "wm"; assert wm.species == "i3";
+  buildWMs.i3 = wm@{terminal, ...}: 
+    world: with world;
+    assert wm.type == "wm"; 
+    assert wm.species == "i3";
 
     let
       myconfig =
         {
-          services.xserver.displayManager.slim = { enable = true; };
-          services.xserver.windowManager.i3 = { enable = true; };
+          services.xserver = { 
+            enable = true; 
+            displayManager.slim.enable = true;
+            windowManager.i3.enable = true; 
+            autorun = true;
+          };
         };
     in
       { config = myconfig;

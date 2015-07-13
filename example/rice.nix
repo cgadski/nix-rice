@@ -11,7 +11,7 @@ let
     makeRice {
       customFiles = 
         [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";} ] ;
-      wm = makeWM.i3 {};
+      wm = makeWM.i3 { terminal = null; };
     };
 
 in

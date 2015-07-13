@@ -4,29 +4,28 @@
 {
   environment.variables.EDITOR = "vim";
 
-  nixpkgs.config =
-    { 
-      allowUnfree = true;
-      firefox = 
-        { enableAdobeFlash = true; }; 
-    };
+  boot.kernelPackages = pkgs.linuxPackages_4_0;
 
-  virtualisation.docker.enable = true;
+  nixpkgs.config = {
+    firefox.enableAdobeFlash = true;
+  };
 
   environment.systemPackages = 
     let
       userpkgs = 
         with pkgs; [
-          wget vim dmenu firefoxWrapper nix-repl weechat 
+          wget vim dmenu nix-repl weechat 
           ranger transmission_gtk vlc
           unzip acpi file git
-          arandr mumble gnome3.gedit gnome3.eog
+          arandr mumble gnome3.eog
           emacs libreoffice
-          i3status ffmpeg
-          lilyterm x11vnc
+          i3status ffmpeg-full
+          lilyterm firefoxWrapper
+          xbacklight acpi
+          steam
         ];
       haskellpkgs = 
-        with pkgs; [ ];
+        with pkgs.haskellPackages; [ cabal-install ghc ];
     in
       userpkgs ++ haskellpkgs;
 

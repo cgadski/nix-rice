@@ -15,4 +15,15 @@
   utils = {
     distribute = import (./distribute.nix) {inherit pkgs;};
   };   
+
+  nullActuator = {
+    config = {};
+    handles = {};
+  };
+
+  # utility function that builds an element into an actuator
+  # with a builder if the element is not null, and otherwise
+  # returns a nullActuator
+  callElement = builder: element: 
+    if isNull element then nullActuator else call (builder element);
 })
