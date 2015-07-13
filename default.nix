@@ -1,6 +1,6 @@
-rec {
+let fix = f: let x = f x; in x; in fix (self: with self; {
 ## PRECOOKED RICE ;) ##
-  precooked = import precooked.nix;
+  precooked = import ./precooked.nix self;
   
 ## CALLRICE returns a CONFIGURATION SET ##
   callRice = rice:
@@ -21,8 +21,7 @@ rec {
 ## BUILDERS return ACTUATORS ##
   # buildRice {{{
   buildRice = world: with world; 
-    mkBuilder "rice" (rice@{customFiles ? [], wm ? null}:
-
+    mkBuilder "rice" (rice@{customFiles ? [], wm ? null, ...}:
       let
         wmActuator = callElement buildWM wm;
         myconfig = { 
@@ -39,7 +38,6 @@ rec {
   # buildWM {{{
   buildWM = world: with world;
     mkBuilder "wm" (wm@{species ? "i3", ...}:
-
       if wm.species == "i3" then
         callElement buildWMs.i3 wm
       else throw "bad species"
@@ -47,22 +45,20 @@ rec {
   # }}}
 
   # buildWMs.i3 {{{
-  buildWMs.i3 = wm@{terminal, modkey, ...}: 
-    world: with world;
-    assert wm.type == "wm"; 
-    assert wm.species == "i3";
-
-    let
-      myconfig =
-        {
-          services.xserver = { 
-            displayManager.slim.enable = true;
-            windowManager.i3.enable = true; 
-            autorun = true; enable = true; 
+  buildWMs.i3 = world: with world;
+    mkBuilder "wm" (wm@{terminal ? null, modkey ? null, ...}: 
+      let
+        myconfig =
+          {
+            services.xserver = { 
+              displayManager.slim.enable = true;
+              windowManager.i3.enable = true; 
+              autorun = true; enable = true; 
+            };
           };
-        };
-    in
-      { config = myconfig;
-        handles = {}; };
+      in
+        { config = myconfig;
+          handles = {}; }
+    );
   # }}}
-}
+})

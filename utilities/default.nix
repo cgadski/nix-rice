@@ -12,9 +12,9 @@
   call = x: if builtins.isFunction x then x world else x;
 
   nullActuator = { config = {}; handles = {}; };
-  callElement = builder: getElement: 
-    let element = call getElement; in
-      if isNull element then nullActuator else call (builder element);
+  callElement = getBuilder: element: 
+    let builder = call getBuilder; in
+      if isNull element then nullActuator else builder element;
 
   mkBuilder = type: f: getElement: 
     let element = (call getElement); in

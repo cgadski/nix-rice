@@ -19,9 +19,9 @@
           unzip acpi file git
           arandr mumble gnome3.eog
           emacs libreoffice
-          i3status ffmpeg-full
+          ffmpeg-full
           lilyterm firefoxWrapper
-          xbacklight acpi
+          xlibs.xbacklight acpi
           steam
         ];
       haskellpkgs = 
@@ -36,7 +36,7 @@
   };
 
   services.xserver =
-    { enable = true; layout = "us"; xkbOptions = "eurosign:e"; autorun = true;
+    { layout = "us"; xkbOptions = "eurosign:e"; 
       config =
         ''
           Section "InputClass"
@@ -46,6 +46,5 @@
             Option "ConstantDeceleration" "5"
           EndSection
         '' ;
-      windowManager = { i3.enable = true; };
     };
 }
