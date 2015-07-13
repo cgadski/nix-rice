@@ -35,22 +35,29 @@ Imagine if posts on r/unixporn all came with their own rice expression so all yo
 
 ## glossary of terms
 
+- world value
+  - epistemically: represents everything an element of a ricing config could want to use.
+  - practically: an internally referenced value constructed in utilities/default.nix, containg things like the nix package set and interal utility functions.
 - element
-  - a set, containing a 'type' attribute and some parameters, which characterizes a part of a ricing configuration: a terminal or a window manager, for example
+  - epistemically: represents a part of a ricing configuration (a terminal of window manager).
+  - practically: a function that, given the world value, constructs a set containing a 'type' attribute and some parameters (filepaths, numbers, other elements, you name it). The type attribute it used to implement a sort of trivial type-system; builders assert that their input element is of a certain type.
 - constructor
-  - a simple function that, given a set of necessary parameters, constructs an element of a specific type
+  - epistemically: turns a set of user-specified parameters into an element; constructors are user-facing.
+  - practically: a simple function that, given a set of necessary parameters, constructs an element.
 - actuator
-  - a function that, given a 'world' parameter containing a host of useful information, returns a set containing a 'config' attribute and a 'handles' attribute, which represent the side-effects the actuator will have on the system configuration and the return values that it may produce respectively
+  - epistemically: the effectful result of an element.
+  - practically: a function that, given the world value, returns a set containing a 'config' attribute and a 'handles' attribute, which represent the side-effects the actuator will have on the system configuration and the return values that it may produce (and be used to construct other actuators)respectively.
 - builder
-  - a function that transforms an element into an actuator
+  - epistemicaly: a function that transforms an element into an actuator.
+  - practically: a function that transforms an element into an actuator.
 - a rice element
-  - a top-level element of the nix-rice system; an entire ricing configuration
+  - a top-level element of the nix-rice system; an entire ricing configuration.
 - callRice
-  - the entrypoint into the nix-rice library; builds a rice element with buildRice, supplies the result with the 'world' parameter and discards the 'handles' attribute that the actuator produces
+  - the entrypoint into the nix-rice library; builds a rice element with buildRice, supplies the result with the 'world' parameter and discards the 'handles' attribute that the actuator produces.
 
 ## description of general structure
 
-callRice, the top-most entry point into nix-rice, accepts a rice element. The rice element is constructed with 'makeRice', taking as parameter a set of elements and values, the elements of which are constructed with other constructors of a similar pattern. Thus, the construction of a rice, similar to the construction of any other element, is hierarchal and fool-proof, an error being returned from a constructor if it is not given sufficient or adequate parameters.
+callRice, the top-most entry point into nix-rice, accepts a rice element. The rice element is constructed with 'makeRice', taking as parameter a set of elements and values, the elements of which are constructed with other constructors of a similar pattern. Thus, the construction of a rice, similar to the construction of any other element, is hierarchal and fool-proof, an error being returned from a constructor if it is not given bad parameters.
 
 For each type of element, there is a respective builder, which turns the element into an actuator; each builder calls builders for the child elements as well, the top-most builder being 'makeRice'.
 
@@ -58,4 +65,6 @@ The various configuration sets in play are merged with lib.mkMerge.
 
 # the mission
 
-Is to go where no ricer has gone before; make a unified system for simple definition and fool-proof and deterministic deployment of ricing configurations.
+  Is to go where no ricer has gone before; make a unified system for simple definition and fool-proof and deterministic deployment of ricing configurations.
+
+  Thanks to everybody who showed interest in this, I'm going to go ahead and put some work into it.

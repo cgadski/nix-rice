@@ -8,4 +8,6 @@ set autoindent
 
 colorscheme desert
 
+set foldmethod=marker
+
 set nu

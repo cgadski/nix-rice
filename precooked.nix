@@ -11,7 +11,11 @@ nix-rice: with nix-rice;
         customFiles = 
           [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";}];
         wm = makeWM.i3 {
-          terminal = "lilyterm";
+          modkey = "Mod4";
+          term = 
+            makeTerm.i3 {
+                  
+            };
         };
       }
     );

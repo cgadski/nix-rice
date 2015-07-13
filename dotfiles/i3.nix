@@ -1,4 +1,4 @@
-{modkey}:
+{modkey, term}:
 ''
 # modkey
 set $mod ${modkey}
@@ -11,7 +11,7 @@ new_window pixel 3
 floating_modifier $mod
 
 # easy access commands
-bindsym $mod+Return exec lilyterm
+bindsym $mod+Return exec ${term}
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec dmenu_run
 
