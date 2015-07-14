@@ -9,7 +9,13 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
         world = import ./utilities/default.nix 
           { inherit pkgs config lib user; };
       in 
-        ((world.call buildRice) rice).config;
+        { 
+          options = {
+            fonts.fonts = lib.mkOption { apply = lib.unique; };
+          };
+          config = 
+            ((world.call buildRice) rice).config; 
+        };
 
 ## CONSTRUCTORS return ELEMENTS ##
   makeRice = opts: 
@@ -136,7 +142,6 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     mkBuilder "font" (font@{name, size ? "12", ...}:
       let
         myconfig = {
-          # options.fonts.fonts.apply = x: lib.removeDuplicates x;
           fonts = {
             enableFontDir = true;
             enableGhostscriptFonts = true;
