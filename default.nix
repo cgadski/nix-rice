@@ -19,7 +19,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
   makeTerm.lilyterm = opts:
     world: { type = "term"; species = "lilyterm"; } // (world.call opts);
   makeFont = opts:
-    world: { type = "font"; species = "dejavu"; } // (world.call opts);
+    world: { type = "font"; } // (world.call opts);
 
 ## BUILDERS return ACTUATORS ##
   # buildRice {{{
@@ -98,7 +98,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     );
   # }}}
 
-  # buildWMs.i3 {{{
+  # buildTerms.lilyterm {{{
   buildTerms.lilyterm = world: with world;
     mkBuilder "term" (
       term@{
@@ -136,6 +136,7 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
     mkBuilder "font" (font@{name, size ? "12", ...}:
       let
         myconfig = {
+          # options.fonts.fonts.apply = x: lib.removeDuplicates x;
           fonts = {
             enableFontDir = true;
             enableGhostscriptFonts = true;

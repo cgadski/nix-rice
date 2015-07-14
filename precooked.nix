@@ -15,9 +15,11 @@ nix-rice: with nix-rice;
       {
         customFiles = 
           [ {input = inputs.vimrc; output = homeFileOutputs ".vimrc";}];
+        
         wm = makeWM.i3 {
           inherit font;
           modkey = "Mod4";
+
           term = makeTerm.lilyterm {
             browser = "firefox";
             email = "thunderbird";
