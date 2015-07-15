@@ -69,6 +69,9 @@ The various configuration sets in play are merged with lib.mkMerge.
 
   Thanks to everybody who showed interest in this, I'm going to go ahead and put some work into it.
 
+  nix-rice on the internet!
+    - https://www.reddit.com/r/unixporn/comments/3daem9/something_cooking_i3/ct3mn28?context=3
+
 # documentation of constructors
 
   Is available in MAKERICE.md in this directory.
