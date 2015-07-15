@@ -1,10 +1,8 @@
 { pkgs, ... }: 
-nix-files:
+files:
 
 let
   inherit (pkgs.stdenv.lib) concatStrings; 
-
-  files = nix-files;
 
   logfile = "/etc/nix-files";
  
@@ -16,9 +14,11 @@ let
 in
 
 # system.activationScripts
-{
-  nix-rice = unlines 
-    [ "rm -f $(cat ${logfile}); rm -f ${logfile}"
-      (unlines (map activateFile files))
-    ];
-}
+  if files == [] then
+    {}
+  else  {
+    nix-rice = unlines 
+      [ "rm -f $(cat ${logfile}); rm -f ${logfile}"
+        (unlines (map activateFile files))
+      ];
+  }
