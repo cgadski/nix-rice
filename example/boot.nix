@@ -6,7 +6,8 @@
   imports = [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix> ];
 
   # hardware
-  boot.initrd.availableKernelModules = [ "xhci_hcd" "ehci_pci" "ahci" "usb_storage" ];
+  boot.initrd.availableKernelModules = 
+    [ "xhci_hcd" "ehci_pci" "ahci" "usb_storage" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.blacklistedKernelModules = [ "snd_pcsp" ];
   boot.extraModprobeConfig = ''

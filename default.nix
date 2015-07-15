@@ -3,8 +3,8 @@ let fix = f: let x = f x; in x; in fix (self: with self; {
   precooked = import ./precooked.nix self;
   
 ## CALLRICE returns a CONFIGURATION SET ##
-  callRice = rice:
-    {lib, config, pkgs, user, ...}:
+  callRice = {lib, config, pkgs, user, ...}:
+    rice:
       let 
         world = import ./utilities/default.nix 
           { inherit pkgs config lib user; };
