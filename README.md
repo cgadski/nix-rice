@@ -74,4 +74,4 @@ The various configuration sets in play are merged with lib.mkMerge.
 
 # documentation of constructors
 
-  Is available in MAKERICE.md in this directory.
+  Is available in 'documentation' file of this directory.
