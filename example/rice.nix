@@ -5,8 +5,7 @@ with import /home/magneticduck/git/nix-rice/default.nix;
 
 callRice {inherit config lib pkgs; user = "magneticduck";}
   (makeRice (world: with world; 
-    let font = makeFont { name = "dejavu"; size = "12"; };
-    # let font = makeFont { name = "inconsolata"; size = "10"; };
+    let font = makeFont { name = "dejavu"; size = "10"; };
     in
     {
       wm = makeWM.i3 {

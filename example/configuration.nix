@@ -2,6 +2,6 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./boot.nix ./software.nix ./rice.nix];
+  imports = [ ./boot.nix ./software.nix ./rice.nix ];
   nixpkgs.config = import ./nixpkgs.nix;
 }
