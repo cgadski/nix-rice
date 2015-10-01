@@ -2,6 +2,9 @@
 { config, pkgs, ... }:
 
 let
+  customEditors =
+    import /home/magneticduck/git/editors {nixpkgs = pkgs;};
+
   my_vim = 
     pkgs.vim_configurable.customize { 
       name = "vim";
@@ -23,6 +26,10 @@ let
 {
   hardware.opengl.driSupport32Bit = true;
 
+  nixpkgs.config.firefox = {
+    enableAdobeFlash = true;
+  };
+
   
   # specify vim's basic configuration 
   environment.variables.EDITOR = "vim";
@@ -37,7 +44,7 @@ let
       userpkgs = 
         with pkgs; [
           my_vim # vim with a wrapper to play nice with nixos
-          sublime3 skype
+          atom skype
           wget dmenu nix-repl weechat 
           ranger transmission_gtk vlc
           unzip acpi file git
@@ -48,17 +55,24 @@ let
           xlibs.xbacklight acpi
           steam # ^^
           postgresql
+
+          # userful for dev
+          gcc zlib 
         ];
       myGhc = with pkgs.haskellPackages;
         ghcWithPackages(p: 
-          [ p.ghc-mod ] # p.ncurses p.lens p.aeson p.text p.haskell-src-exts p.haddock-api ]
+          [ p.ghc-mod p.hdevtools ] # p.ncurses p.lens p.aeson p.text p.haskell-src-exts p.haddock-api ]
         );
       haskellpkgs =  
         with pkgs.haskellPackages; [ 
-          cabal-install myGhc stylish-haskell cabal2nix
+          cabal-install myGhc stylish-haskell cabal2nix 
+        ];
+      editors =
+        with customEditors; [
+          sublime
         ];
     in
-      userpkgs ++ haskellpkgs;
+      userpkgs ++ haskellpkgs ++ editors;
 
   users.extraUsers.magneticduck = {
     isNormalUser = true;
